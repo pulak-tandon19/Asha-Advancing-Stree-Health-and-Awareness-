@@ -1,10 +1,15 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+import os
+import secrets
 
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(32)
 
-@app.route('/')
-def hello():
-    return jsonify({'message': 'Hello, ASHA app!'})
+currentDirectory = os.getcwd()
+databasePath = os.path.join(currentDirectory, "database.db")
 
-if __name__ == '__main__':
-    app.run(debug=True)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + databasePath
+db = SQLAlchemy(app)
+import routes, models
+
